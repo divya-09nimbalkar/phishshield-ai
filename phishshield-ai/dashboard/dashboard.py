@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="PhishShield AI",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",   # ← FIXED: was "collapsed"
 )
 
 # ── Users file ───────────────────────────────────────────────
@@ -63,7 +63,7 @@ def login(username, password):
 if "logged_in"    not in st.session_state: st.session_state.logged_in    = False
 if "username"     not in st.session_state: st.session_state.username     = ""
 if "user_data"    not in st.session_state: st.session_state.user_data    = {}
-if "auth_page"    not in st.session_state: st.session_state.auth_page    = "login"  # login | signup
+if "auth_page"    not in st.session_state: st.session_state.auth_page    = "login"
 if "login_err"    not in st.session_state: st.session_state.login_err    = ""
 if "signup_err"   not in st.session_state: st.session_state.signup_err   = ""
 if "signup_ok"    not in st.session_state: st.session_state.signup_ok    = ""
@@ -74,11 +74,24 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
-[data-testid="stAppViewContainer"] { background-color: #040d1a; }
-[data-testid="stSidebar"]          { background-color: #050f1e; border-right:1px solid #0d3a5c; }
-section[data-testid="stSidebar"] * { color:#a0c4d8 !important; }
-#MainMenu, footer, header          { visibility:hidden; }
-[data-testid="stToolbar"]          { display:none; }
+
+/* Main background */
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+.main { background-color: #040d1a !important; }
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #050f1e !important;
+    border-right: 1px solid #0d3a5c !important;
+}
+section[data-testid="stSidebar"] * { color: #a0c4d8 !important; }
+
+/* ── DO NOT TOUCH header/toolbar — sidebar toggle lives there ── */
+/* Only hide the hamburger menu text and footer watermark */
+#MainMenu { visibility: hidden; }
+footer    { visibility: hidden; }
+
 h1,h2,h3,p,div,span,label         { color:#c8e6f0; }
 
 /* ── Auth wrapper ── */
@@ -267,7 +280,6 @@ h1,h2,h3,p,div,span,label         { color:#c8e6f0; }
 #  AUTH PAGES  (shown when not logged in)
 # ══════════════════════════════════════════════════════════════
 def show_login():
-    # Centre the form with empty columns
     _, mid, _ = st.columns([1, 1.2, 1])
     with mid:
         st.markdown("""
@@ -453,7 +465,6 @@ def show_dashboard():
         </div>""", unsafe_allow_html=True)
         st.markdown("---")
 
-        # User info
         uname = st.session_state.username
         email = st.session_state.user_data.get("email", "")
         since = st.session_state.user_data.get("created", "")
